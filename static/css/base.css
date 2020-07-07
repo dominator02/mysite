@@ -31,3 +31,19 @@ div.nav a.logo{
 ul.navbar-right{
     margin-right: 0;
 }
+
+div.footer{
+    margin-top: 3em;
+    background-color: #eeeeee;
+    color: #555555;
+}
+div.website-info{
+    text-align: center;
+    padding-top: 2em;
+    padding-bottom: 1em;
+    margin-bottom: 0;
+}
+div.website-info p{
+    margin-bottom: 0;
+
+}
