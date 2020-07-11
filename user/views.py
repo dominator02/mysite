@@ -5,10 +5,35 @@ from .forms import LoginForm, RegForm, ChangeNicknameForm, BindEmailForm,ChangeP
 from django.contrib.auth.models import User
 from django.http import JsonResponse
 from django.core.mail import send_mail
+from django.conf import settings
+from urllib.request import urlopen
+from urllib.parse import urlencode,parse_qs
 from .models import Profile
 import string
 import random
 import time
+import json
+
+
+def login_by_qq(request):
+    code=request.GET['code']
+    state=request.GET['states']
+    if state!=settings.QQ_STATE:
+        raise Exception("state error")
+    params={
+        'grant_type':'authorization_code',
+        'client_id':settings.QQ_APP_ID,
+        'client_secret':settings.QQ_APP_KEY,
+        'code':code,
+        'redirect_uri':settings.QQ_REDIRECT_URL,
+    }
+    response=urlopen('https://graph.qq.com/oauth2.0/token?' + urlencode(params))
+    data=response.read().decode('utf8')
+    access_token=parse_qs(data)['access_token'][0]
+    response=urlopen('https://graph.qq.com/oauth2.0/me?access_token='+access_token)
+    data=response.read().decode('utf8')
+    openid=json.loads(data[10:-4])['openid']
+
 
 
 def login(request):

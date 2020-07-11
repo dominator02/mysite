@@ -164,4 +164,12 @@ CACHES = {
     }
 }
 
+#qq登录配置
+QQ_APP_ID='101886699'
+QQ_REDIRECT_URL='https://dominator02.site/user/login_by_qq'
+QQ_STATE='dominator'
+QQ_APP_KEY=os.environ['QQ_APP_KEY']
+
+
+
 

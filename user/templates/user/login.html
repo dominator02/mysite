@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
+{% load user_tags %}
 {% block title %}
     我的网址| 登录
 {% endblock %}
@@ -35,6 +36,10 @@
                             </form>
                         </div>
                     </div>
+                    <a href="{% get_login_qq_url %}">
+                        <img src="{% static 'user/qq.png' %}">
+                        使用qq登录
+                    </a>
                 {% else %}
                     <span>已登录，跳转到首页...</span>
                     <script type="text/javascript">
