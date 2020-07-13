@@ -1,14 +1,14 @@
 from django.shortcuts import render, redirect
 from django.contrib import auth
 from django.urls import reverse
-from .forms import LoginForm, RegForm, ChangeNicknameForm, BindEmailForm,ChangePasswordForm,ForgetPasswordForm
+from .forms import LoginForm, RegForm, ChangeNicknameForm, BindEmailForm,ChangePasswordForm,ForgetPasswordForm,BindQQForm
 from django.contrib.auth.models import User
 from django.http import JsonResponse
 from django.core.mail import send_mail
 from django.conf import settings
 from urllib.request import urlopen
 from urllib.parse import urlencode,parse_qs
-from .models import Profile
+from .models import Profile,OAuthRelationship
 import string
 import random
 import time
@@ -33,8 +33,64 @@ def login_by_qq(request):
     response=urlopen('https://graph.qq.com/oauth2.0/me?access_token='+access_token)
     data=response.read().decode('utf8')
     openid=json.loads(data[10:-4])['openid']
+    if OAuthRelationship.objects.filter(openid=openid,oauth=0).exists():
+        relationship=OAuthRelationship.objects.get(openid=openid,oauth=0)
+        auth.login(request,relationship.user)
+        return redirect(reverse('home'))
+    else:
+        params={
+            'access_token':access_token,
+            'oauth_consumer_key':settings.QQ_APP_ID,
+            'openid':openid,
+        }
+        response=urlopen('https://graph.qq.com/user/get_user_info?'+urlencode(params))
+        data=json.loads(response.read().decode('utf8'))
 
+        params={
+            'nickname' : data['nickname'],
+            'avatar' : data['figureurl_qq_1'],
+        }
+        request.session['openid']=openid
+        return redirect(reverse('bind_qq')+'?'+urlencode(params))
 
+def bind_qq(request):
+    if request.method == 'POST':
+        bind_qq_form = LoginForm(request.POST)
+        if bind_qq_form.is_valid():
+            user = bind_qq_form.cleaned_data['user']
+            openid=request.session.pop('openid')
+            relationship=OAuthRelationship()
+            relationship.user=user
+            relationship.openid=openid
+            relationship.oauth_type=0
+            relationship.save()
+            auth.login(request, user)
+            return redirect(reverse('home'))
+    else:
+        bind_qq_form = BindQQForm()
+    context = {}
+    context['bind_qq_form'] = bind_qq_form
+    context['nickname']=request.GET['nickname']
+    context['avatar']=request.GET['avatar']
+    return render(request, 'user/bind_qq.html', context)
+
+def create_user_by_qq(request):
+    username = str(int(time.time()))
+    password = ''.join(random.sample(string.ascii_letters + string.digits, 16))
+    user = User.objects.create_user(username, '', password)
+    profile=Profile()
+    profile.user=user
+    profile.nickname=request.GET['nickname']
+    profile.save()
+
+    openid = request.session.pop('openid')
+    relationship = OAuthRelationship()
+    relationship.user = user
+    relationship.openid = openid
+    relationship.oauth_type = 0
+    relationship.save()
+    auth.login(request, user)
+    return redirect(reverse('home'))
 
 def login(request):
     # username=request.POST.get('username','')
@@ -58,6 +114,7 @@ def login(request):
     context = {}
     context['login_form'] = login_form
     return render(request, 'user/login.html', context)
+
 
 
 def login_for_medal(request):

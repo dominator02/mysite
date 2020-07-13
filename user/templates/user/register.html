@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load user_tags%}
 {% block title %}
     我的网址| 注册
 {% endblock %}
@@ -25,16 +26,37 @@
                                 {% csrf_token %}
                                 {%for field in reg_form%}
                                     <label for="{{field.id_for_label}}">{{field.label}}</label>
-                                    {{field}}
+                                    {% if field.id_for_label=='id_email'%}
+                                        <div class="input-group">
+                                            {{field}}
+                                            <span class="input-group-btn">
+                                                <button type="button" id="send_code" class="btn btn-default">发送验证码</button>
+
+                                            </span>
+                                        </div>
+                                    {% else %}
+                                        {{field}}
+                                    {% endif %}
+
                                     <p class="text-danger">{{field.errors.as_text}}</p>
                                 {%endfor%}
-                                <span class=" text-danger">{{login_form.non_field_errors}}</span>
+                                <span id="tip" class=" text-danger">{{login_form.non_field_errors}}</span>
                                 <div class="clearfix"></div>
-                                <button type="button" id="send_code" class="btn btn-primary pull-left">发送验证码</button>
+                                <a style="margin-top: 8px; display: inline-block;"  href="{% get_login_qq_url %}">
+                                    <img src="{% static 'user/qq.png' %}">
+                                    使用qq登录
+                                </a>
+
                                 <input type="submit" value="注册" class="btn btn-primary pull-right">
                             </form>
                         </div>
                     </div>
+
+                    {% if request.GET.from %}
+                        <a href="{% url 'login' %}?from={{request.GET.from}}">前往登录&gt;&gt;</a>
+                    {% else %}
+                        <a href="{% url 'login' %}?from={{request.get_full_path}}">前往登录&gt;&gt;</a>
+                    {% endif %}
                 {% else %}
                     <span>已登录，跳转到首页...</span>
                     <script type="text/javascript">
