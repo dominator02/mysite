@@ -33,8 +33,8 @@ def login_by_qq(request):
     response=urlopen('https://graph.qq.com/oauth2.0/me?access_token='+access_token)
     data=response.read().decode('utf8')
     openid=json.loads(data[10:-4])['openid']
-    if OAuthRelationship.objects.filter(openid=openid,oauth=0).exists():
-        relationship=OAuthRelationship.objects.get(openid=openid,oauth=0)
+    if OAuthRelationship.objects.filter(openid=openid,oauth_type=0).exists():
+        relationship=OAuthRelationship.objects.get(openid=openid,oauth_type=0)
         auth.login(request,relationship.user)
         return redirect(reverse('home'))
     else:
