@@ -17,7 +17,7 @@ import json
 
 def login_by_qq(request):
     code=request.GET['code']
-    state=request.GET['states']
+    state=request.GET['state']
     if state!=settings.QQ_STATE:
         raise Exception("state error")
     params={
