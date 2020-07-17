@@ -53,3 +53,7 @@ div.website-info p{
     bottom:0;
     width: 100%;
 }
+
+.unread-count{
+    background-color: #d9534f!important;
+}

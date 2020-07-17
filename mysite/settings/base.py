@@ -39,6 +39,8 @@ INSTALLED_APPS = [
     'comment',
     'likes',
     'user',
+    'notifications',
+    'my_notifications',
 
 ]
 
@@ -86,7 +88,6 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 # }
 
 
-
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
 
@@ -122,7 +123,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT=os.path.join(BASE_DIR,'static_collected')
+STATIC_ROOT = os.path.join(BASE_DIR, 'static_collected')
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
@@ -164,12 +165,12 @@ CACHES = {
     }
 }
 
-#qq登录配置
-QQ_APP_ID='101886699'
-QQ_REDIRECT_URL='http://dominator02.site/user/login_by_qq'
-QQ_STATE='dominator'
-QQ_APP_KEY=os.environ['QQ_APP_KEY']
+# qq登录配置
+QQ_APP_ID = '101886699'
+QQ_REDIRECT_URL = 'http://dominator02.site/user/login_by_qq'
+QQ_STATE = 'dominator'
+QQ_APP_KEY = os.environ['QQ_APP_KEY']
 
-
-
-
+DJANGO_NOTIFICATIONS_CONFIG = {
+    'USE_JSONFIELD': True,
+}

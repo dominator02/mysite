@@ -26,7 +26,7 @@
                                 {% csrf_token %}
                                 {%for field in reg_form%}
                                     <label for="{{field.id_for_label}}">{{field.label}}</label>
-                                    {% if field.id_for_label=='id_email'%}
+                                     {% if field.id_for_label == 'id_email' %}
                                         <div class="input-group">
                                             {{field}}
                                             <span class="input-group-btn">

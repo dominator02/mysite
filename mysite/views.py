@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404, redirect
 from read_statistics.utils import get_seven_days_read_data
 from blog.models import Blog
 from django.contrib.contenttypes.models import ContentType
@@ -122,3 +122,5 @@ def home(request):
 # def user_info(request):
 #     context = {}
 #     return render(request, 'user_info.html', context)
+
+
